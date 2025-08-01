@@ -20,12 +20,14 @@ st.markdown("""
         background: linear-gradient(90deg,#06d6a0,#118ab2,#f72585);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        animation: morph 5s infinite linear;
+        animation: morph 2.5s infinite alternate;
+        text-align: center;
+        margin-bottom: 2rem;
     }
     @keyframes morph {
-      0% {letter-spacing:0.2em;}
-      50% {letter-spacing:0.4em;}
-      100% {letter-spacing:0.2em;}
+      0% {letter-spacing:0.15em;}
+      50% {letter-spacing:0.35em;}
+      100% {letter-spacing:0.15em;}
     }
     .spiral-bg {
         position: fixed;
@@ -68,32 +70,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.set_page_config(page_title="Edgy ChatGPT Reviews Dashboard", layout="wide")
+st.set_page_config(page_title="ChatGPT Feedback Hub", layout="wide")
 
-# ---- Morphing Text Demo ----
-texts = [
-    "Hello",
-    "Morphing",
-    "Text",
-    "Animation",
-    "React",
-    "Component",
-    "Smooth",
-    "Transition",
-    "Engaging"
-]
-
-def morphing_text(texts, duration=1500):
-    import time
-    import random
-    idx = 0
-    placeholder = st.empty()
-    while True:
-        placeholder.markdown(f"<div class='morphing-text'>{texts[idx]}</div>", unsafe_allow_html=True)
-        idx = (idx + 1) % len(texts)
-        time.sleep(duration / 1000)
-
-# ---- Spiral Animation (Static Placeholder) ----
 def spiral_animation_bg():
     st.markdown("<div class='spiral-bg'></div>", unsafe_allow_html=True)
 
@@ -104,9 +82,11 @@ if "csv_uploaded" not in st.session_state:
 if not st.session_state.csv_uploaded:
     spiral_animation_bg()
     st.markdown("<br><br><br>", unsafe_allow_html=True)
-    st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-    st.markdown("<div class='morphing-text'>Morphing Text Animation</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    # Morphing Text - static text with morph effect
+    st.markdown(
+        "<div class='morphing-text'>ChatGPT Feedback Hub</div>",
+        unsafe_allow_html=True
+    )
     st.markdown("<div class='enter-btn'><button id='enter-btn'>Enter</button></div>", unsafe_allow_html=True)
     st.markdown("""
         <script>
@@ -131,7 +111,7 @@ if not st.session_state.csv_uploaded:
         st.session_state.csv_uploaded = True
         df = pd.read_csv(uploaded_file)
 else:
-    st.title("Edgy ChatGPT Reviews Dashboard")
+    st.title("ChatGPT Feedback Hub")
     st.markdown("<hr>", unsafe_allow_html=True)
 
     # CSV is uploaded; load data
