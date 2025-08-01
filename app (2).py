@@ -45,8 +45,6 @@ st.markdown("""
         50% {background-position: 100% 100%;}
         100% {background-position: 0% 0%;}
     }
-    /* Remove any center button styling */
-    .enter-btn {display: none;}
     </style>
     <div class='spiral-bg'></div>
 """, unsafe_allow_html=True)
