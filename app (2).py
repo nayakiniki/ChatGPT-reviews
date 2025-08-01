@@ -5,7 +5,7 @@ import seaborn as sns
 from wordcloud import WordCloud
 from textblob import TextBlob
 
-# ---- Edgy Custom CSS ----
+# ---- Edgy Spiral-Like Animated Background CSS ----
 st.markdown("""
     <style>
     body {background: #18181b;}
@@ -29,83 +29,44 @@ st.markdown("""
       50% {letter-spacing:0.35em;}
       100% {letter-spacing:0.15em;}
     }
+    /* Spiral-inspired animated background */
     .spiral-bg {
         position: fixed;
         inset: 0;
         z-index: 0;
-        background: radial-gradient(ellipse at center, #222 40%, #18181b 100%);
+        width: 100vw;
+        height: 100vh;
         overflow: hidden;
+        background: radial-gradient(ellipse 70% 70% at 50% 50%, #23272f 40%, #06d6a0 60%, #118ab2 85%, #18181b 100%);
+        animation: spiralmove 12s linear infinite;
     }
-    .enter-btn {
-        position: absolute;
-        left: 50%;
-        top: 60%;
-        transform: translate(-50%,-50%);
-        z-index: 10;
-        text-align: center;
-    }
-    .enter-btn button {
-        background: none;
-        border: none;
-        color: #fff;
-        font-size: 2.5rem;
-        letter-spacing: 0.2em;
-        font-family: inherit;
-        cursor: pointer;
-        padding: 0.5em 1.5em;
-        border-radius: 8px;
-        box-shadow: 0 0 20px #06d6a0,0 0 60px #118ab2;
-        transition: letter-spacing 0.7s;
-        animation: pulse 1.7s infinite;
-    }
-    .enter-btn button:hover {
-        letter-spacing: 0.3em;
-        box-shadow: 0 0 40px #f72585;
-    }
-    @keyframes pulse {
-        0% {box-shadow: 0 0 20px #06d6a0;}
-        50% {box-shadow: 0 0 40px #f72585;}
-        100% {box-shadow: 0 0 20px #06d6a0;}
+    @keyframes spiralmove {
+        0% {background-position: 0% 0%;}
+        50% {background-position: 100% 100%;}
+        100% {background-position: 0% 0%;}
     }
     </style>
+    <div class='spiral-bg'></div>
 """, unsafe_allow_html=True)
 
 st.set_page_config(page_title="ChatGPT Feedback Hub", layout="wide")
-
-def spiral_animation_bg():
-    st.markdown("<div class='spiral-bg'></div>", unsafe_allow_html=True)
 
 # ---- Main App State ----
 if "csv_uploaded" not in st.session_state:
     st.session_state.csv_uploaded = False
 
 if not st.session_state.csv_uploaded:
-    spiral_animation_bg()
     st.markdown("<br><br><br>", unsafe_allow_html=True)
-    # Morphing Text - static text with morph effect
+    # Morphing Text - static text with morph effect, centered
     st.markdown(
         "<div class='morphing-text'>ChatGPT Feedback Hub</div>",
         unsafe_allow_html=True
     )
-    st.markdown("<div class='enter-btn'><button id='enter-btn'>Enter</button></div>", unsafe_allow_html=True)
-    st.markdown("""
-        <script>
-        const btn = window.parent.document.getElementById('enter-btn');
-        if(btn){
-            btn.onclick = () => {
-                window.parent.document.getElementById('csv-uploader').scrollIntoView({behavior:'smooth'});
-            }
-        }
-        </script>
-    """, unsafe_allow_html=True)
-
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown("<div id='csv-uploader'></div>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(
         "<div style='text-align:center;color:#06d6a0;font-size:1.3rem;'>Upload your ChatGPT Reviews CSV:</div>", 
         unsafe_allow_html=True
     )
-
     uploaded_file = st.file_uploader("Upload CSV", type="csv")
     if uploaded_file is not None:
         st.session_state.csv_uploaded = True
