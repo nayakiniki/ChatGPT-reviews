@@ -5,7 +5,7 @@ import seaborn as sns
 from wordcloud import WordCloud
 from textblob import TextBlob
 
-# ---- Edgy Spiral-Like Animated Background CSS ----
+# ---- Spiral-inspired Animated Background CSS ----
 st.markdown("""
     <style>
     body {background: #18181b;}
@@ -29,7 +29,6 @@ st.markdown("""
       50% {letter-spacing:0.35em;}
       100% {letter-spacing:0.15em;}
     }
-    /* Spiral-inspired animated background */
     .spiral-bg {
         position: fixed;
         inset: 0;
@@ -51,13 +50,11 @@ st.markdown("""
 
 st.set_page_config(page_title="ChatGPT Feedback Hub", layout="wide")
 
-# ---- Main App State ----
 if "csv_uploaded" not in st.session_state:
     st.session_state.csv_uploaded = False
 
 if not st.session_state.csv_uploaded:
     st.markdown("<br><br><br>", unsafe_allow_html=True)
-    # Morphing Text - static text with morph effect, centered
     st.markdown(
         "<div class='morphing-text'>ChatGPT Feedback Hub</div>",
         unsafe_allow_html=True
@@ -75,7 +72,6 @@ else:
     st.title("ChatGPT Feedback Hub")
     st.markdown("<hr>", unsafe_allow_html=True)
 
-    # CSV is uploaded; load data
     uploaded_file = st.file_uploader("Upload CSV to reload", type="csv")
     if uploaded_file:
         df = pd.read_csv(uploaded_file)
@@ -83,7 +79,6 @@ else:
         st.warning("Please upload a CSV file to continue.")
         st.stop()
 
-    # ---- Data Preprocessing ----
     df['Review Length'] = df['Review'].apply(lambda x: len(str(x)) if pd.notnull(x) else 0)
     try:
         df['Sentiment'] = df['Review'].apply(lambda x: TextBlob(str(x)).sentiment.polarity if pd.notnull(x) else 0)
@@ -92,7 +87,6 @@ else:
         df['Sentiment'] = 0
         df['Sentiment_Class'] = "Neutral"
 
-    # ---- Sidebar Filters ----
     st.sidebar.header("Filters")
     rating_options = sorted(df['Ratings'].dropna().unique())
     sentiment_options = ['Positive', 'Negative', 'Neutral']
@@ -100,7 +94,6 @@ else:
     selected_sentiments = st.sidebar.multiselect("Select Sentiment(s)", sentiment_options, default=sentiment_options)
     filtered_df = df[df['Ratings'].isin(selected_ratings) & df['Sentiment_Class'].isin(selected_sentiments)]
 
-    # ---- Metrics Row ----
     col1, col2, col3 = st.columns(3)
     col1.metric("Total Reviews", len(filtered_df))
     col2.metric("Avg. Rating", f"{filtered_df['Ratings'].mean():.2f}" if len(filtered_df) else "--")
@@ -108,7 +101,6 @@ else:
 
     st.markdown("<hr>", unsafe_allow_html=True)
 
-    # ---- Ratings Distribution ----
     st.subheader("Ratings Distribution")
     if len(filtered_df):
         fig, ax = plt.subplots()
@@ -118,7 +110,6 @@ else:
     else:
         st.info("No data for selected filters.")
 
-    # ---- Sentiment Distribution ----
     st.subheader("Sentiment Breakdown")
     if len(filtered_df):
         fig, ax = plt.subplots()
@@ -128,7 +119,6 @@ else:
     else:
         st.info("No data for selected filters.")
 
-    # ---- Word Cloud ----
     st.subheader("Review Word Cloud")
     all_reviews = ' '.join(filtered_df['Review'].dropna().astype(str))
     if all_reviews.strip():
@@ -140,7 +130,6 @@ else:
     else:
         st.info("No review text available for word cloud in current filter.")
 
-    # ---- Sentiment vs Rating ----
     st.subheader("Sentiment Polarity by Rating")
     if len(filtered_df):
         fig, ax = plt.subplots()
@@ -150,7 +139,6 @@ else:
     else:
         st.info("No data for sentiment vs rating.")
 
-    # ---- Temporal Trends ----
     st.subheader("Trends Over Time")
     if 'Review Date' in filtered_df.columns and len(filtered_df):
         try:
@@ -170,11 +158,9 @@ else:
     else:
         st.info("No 'Review Date' column found for time trends.")
 
-    # ---- Data Table ----
     with st.expander("Show Raw Data Table"):
         st.dataframe(filtered_df[['Review Date','Ratings','Review','Sentiment','Sentiment_Class','Review Length']] if len(filtered_df) else filtered_df)
 
-    # ---- Footer ----
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown(
         "<p style='text-align:center;font-size:16px;color:#06d6a0;'>"
