@@ -22,7 +22,7 @@ st.markdown("""
 st.set_page_config(page_title="ChatGPT Reviews Edgy Dashboard", layout="wide")
 
 # ---- Load CSV automatically ----
-CSV_PATH = os.path.join("data", "ChatGPT_Reviews.csv")
+CSV_PATH = "ChatGPT_Reviews.csv"
 try:
     df = pd.read_csv(CSV_PATH)
 except Exception as e:
