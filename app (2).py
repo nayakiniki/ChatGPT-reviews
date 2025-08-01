@@ -21,12 +21,12 @@ st.markdown("""
         font-weight: 900;
         text-align: center;
         letter-spacing: 0.15em;
-        background: linear-gradient(90deg, #eaeaea 8%, #bdbdbd 30%, #f8f8f8 50%, #f72585 65%, #eaeaea 80%);
+        background: linear-gradient(90deg, #eaeaea 8%, #bdbdbd 30%, #f8f8f8 60%, #00eaff 80%, #eaeaea 100%);
         background-size: 400% auto;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         animation: shine 2.7s linear infinite, pop 1.1s cubic-bezier(.22,1.61,.36,.98) 1;
-        filter: drop-shadow(0 0 18px #f72585) drop-shadow(0 0 7px #eaeaea);
+        filter: drop-shadow(0 0 18px #00eaff) drop-shadow(0 0 7px #eaeaea);
         margin-bottom: 2.8rem;
         margin-top: 1.5rem;
         text-transform: uppercase;
@@ -57,7 +57,7 @@ st.markdown("""
         width: 100vw;
         height: 100vh;
         overflow: hidden;
-        background: radial-gradient(ellipse 70% 70% at 50% 50%, #18181b 35%, #23272f 60%, #f72585 85%, #eaeaea 100%);
+        background: radial-gradient(ellipse 70% 70% at 50% 50%, #18181b 35%, #23272f 60%, #00eaff 85%, #eaeaea 100%);
         animation: spiralmove 16s linear infinite;
     }
     @keyframes spiralmove {
@@ -71,12 +71,12 @@ st.markdown("""
         text-align: center;
         letter-spacing: 0.09em;
         color: #eaeaea !important;
-        background: linear-gradient(90deg, #f72585 0%, #eaeaea 100%);
+        background: linear-gradient(90deg, #00eaff 0%, #eaeaea 100%);
         background-size: 200% auto;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         animation: shine 3.6s linear infinite, pop 1.4s cubic-bezier(.22,1.61,.36,.98) 1;
-        filter: drop-shadow(0 0 7px #f72585);
+        filter: drop-shadow(0 0 7px #00eaff);
         margin-bottom: 2.1rem;
         margin-top: 0.25rem;
     }
@@ -182,7 +182,7 @@ else:
             sentiment_trend = filtered_df.groupby('Date')['Sentiment'].mean()
             fig, ax = plt.subplots(figsize=(12,6))
             ax.plot(rating_trend.index, rating_trend, label='Avg Rating', color="#eaeaea", marker="o")
-            ax.plot(sentiment_trend.index, sentiment_trend, label='Avg Sentiment', color="#f72585", linestyle='--', marker="x")
+            ax.plot(sentiment_trend.index, sentiment_trend, label='Avg Sentiment', color="#00eaff", linestyle='--', marker="x")
             ax.set_xlabel('Date')
             ax.set_ylabel('Score')
             ax.set_facecolor("#23272f")
