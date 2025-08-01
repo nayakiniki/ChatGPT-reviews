@@ -5,17 +5,47 @@ import seaborn as sns
 from wordcloud import WordCloud
 from textblob import TextBlob
 
-# ---- Simple Dark Theme CSS ----
+# ---- Spiral-inspired Animated Background CSS ----
 st.markdown("""
     <style>
-    body, .stApp {background: #18181b;}
-    h1, h2, h3, h4, p, div, label, .markdown-text-container, .css-1d391kg, .css-1v0mbdj, .css-1c7y2kd, .css-1f0v6h7, .css-1o72pil, .css-1f2kwz6, .css-1r6slb0, .css-1w2y31u {
-        color: #eaeaea !important;
-    }
+    body {background: #18181b;}
+    .stApp {background: #18181b;}
+    h1, h2, h3, h4 {color: #06d6a0;}
     .block-container {padding-top: 2rem;}
+    hr {border-top: 2px solid #06d6a0;}
     .sidebar .sidebar-content {background-color: #23272f;}
-    hr {border-top: 2px solid #23272f;}
+    .morphing-text {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(90deg,#06d6a0,#118ab2,#f72585);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: morph 2.5s infinite alternate;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    @keyframes morph {
+      0% {letter-spacing:0.15em;}
+      50% {letter-spacing:0.35em;}
+      100% {letter-spacing:0.15em;}
+    }
+    .spiral-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background: radial-gradient(ellipse 70% 70% at 50% 50%, #23272f 40%, #06d6a0 60%, #118ab2 85%, #18181b 100%);
+        animation: spiralmove 12s linear infinite;
+    }
+    @keyframes spiralmove {
+        0% {background-position: 0% 0%;}
+        50% {background-position: 100% 100%;}
+        100% {background-position: 0% 0%;}
+    }
     </style>
+    <div class='spiral-bg'></div>
 """, unsafe_allow_html=True)
 
 st.set_page_config(page_title="ChatGPT Feedback Hub", layout="wide")
@@ -24,14 +54,24 @@ if "csv_uploaded" not in st.session_state:
     st.session_state.csv_uploaded = False
 
 if not st.session_state.csv_uploaded:
-    st.markdown("<h1 style='text-align:center;'>ChatGPT Feedback Hub</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center;'>Upload your ChatGPT Reviews CSV</p>", unsafe_allow_html=True)
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='morphing-text'>ChatGPT Feedback Hub</div>",
+        unsafe_allow_html=True
+    )
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(
+        "<div style='text-align:center;color:#06d6a0;font-size:1.3rem;'>Upload your ChatGPT Reviews CSV:</div>", 
+        unsafe_allow_html=True
+    )
     uploaded_file = st.file_uploader("Upload CSV", type="csv")
     if uploaded_file is not None:
         st.session_state.csv_uploaded = True
         df = pd.read_csv(uploaded_file)
 else:
-    st.markdown("<h1 style='text-align:center;'>ChatGPT Feedback Hub</h1>", unsafe_allow_html=True)
+    st.title("ChatGPT Feedback Hub")
+    st.markdown("<hr>", unsafe_allow_html=True)
+
     uploaded_file = st.file_uploader("Upload CSV to reload", type="csv")
     if uploaded_file:
         df = pd.read_csv(uploaded_file)
@@ -50,24 +90,22 @@ else:
     st.sidebar.header("Filters")
     rating_options = sorted(df['Ratings'].dropna().unique())
     sentiment_options = ['Positive', 'Negative', 'Neutral']
-    selected_ratings = st.sidebar.multiselect("Ratings", rating_options, default=rating_options)
-    selected_sentiments = st.sidebar.multiselect("Sentiment", sentiment_options, default=sentiment_options)
+    selected_ratings = st.sidebar.multiselect("Select Rating(s)", rating_options, default=rating_options)
+    selected_sentiments = st.sidebar.multiselect("Select Sentiment(s)", sentiment_options, default=sentiment_options)
     filtered_df = df[df['Ratings'].isin(selected_ratings) & df['Sentiment_Class'].isin(selected_sentiments)]
-
-    st.markdown("---")
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Total Reviews", len(filtered_df))
     col2.metric("Avg. Rating", f"{filtered_df['Ratings'].mean():.2f}" if len(filtered_df) else "--")
     col3.metric("Positive Sentiment (%)", f"{(filtered_df['Sentiment_Class']=='Positive').mean()*100:.1f}%" if len(filtered_df) else "--")
 
-    st.markdown("---")
+    st.markdown("<hr>", unsafe_allow_html=True)
 
     st.subheader("Ratings Distribution")
     if len(filtered_df):
         fig, ax = plt.subplots()
-        sns.countplot(x='Ratings', data=filtered_df, palette='gray')
-        ax.set_facecolor("#18181b")
+        sns.countplot(x='Ratings', data=filtered_df, palette='cool')
+        ax.set_facecolor("#23272f")
         st.pyplot(fig)
     else:
         st.info("No data for selected filters.")
@@ -75,8 +113,8 @@ else:
     st.subheader("Sentiment Breakdown")
     if len(filtered_df):
         fig, ax = plt.subplots()
-        sns.countplot(x='Sentiment_Class', data=filtered_df, palette='gray')
-        ax.set_facecolor("#18181b")
+        sns.countplot(x='Sentiment_Class', data=filtered_df, palette='mako')
+        ax.set_facecolor("#23272f")
         st.pyplot(fig)
     else:
         st.info("No data for selected filters.")
@@ -84,7 +122,7 @@ else:
     st.subheader("Review Word Cloud")
     all_reviews = ' '.join(filtered_df['Review'].dropna().astype(str))
     if all_reviews.strip():
-        wordcloud = WordCloud(width=800, height=400, background_color='#18181b', colormap='gray').generate(all_reviews)
+        wordcloud = WordCloud(width=800, height=400, background_color='#18181b', colormap='cool').generate(all_reviews)
         fig, ax = plt.subplots(figsize=(12,6))
         ax.imshow(wordcloud, interpolation='bilinear')
         ax.axis('off')
@@ -95,8 +133,8 @@ else:
     st.subheader("Sentiment Polarity by Rating")
     if len(filtered_df):
         fig, ax = plt.subplots()
-        sns.boxplot(x='Ratings', y='Sentiment', data=filtered_df, palette='gray')
-        ax.set_facecolor("#18181b")
+        sns.boxplot(x='Ratings', y='Sentiment', data=filtered_df, palette='Set2')
+        ax.set_facecolor("#23272f")
         st.pyplot(fig)
     else:
         st.info("No data for sentiment vs rating.")
@@ -108,11 +146,11 @@ else:
             rating_trend = filtered_df.groupby('Date')['Ratings'].mean()
             sentiment_trend = filtered_df.groupby('Date')['Sentiment'].mean()
             fig, ax = plt.subplots(figsize=(12,6))
-            ax.plot(rating_trend.index, rating_trend, label='Avg Rating', color="#eaeaea", marker="o")
-            ax.plot(sentiment_trend.index, sentiment_trend, label='Avg Sentiment', color="#888888", linestyle='--', marker="x")
+            ax.plot(rating_trend.index, rating_trend, label='Avg Rating', color="#06d6a0", marker="o")
+            ax.plot(sentiment_trend.index, sentiment_trend, label='Avg Sentiment', color="#118ab2", linestyle='--', marker="x")
             ax.set_xlabel('Date')
             ax.set_ylabel('Score')
-            ax.set_facecolor("#18181b")
+            ax.set_facecolor("#23272f")
             ax.legend()
             st.pyplot(fig)
         except Exception as e:
@@ -123,9 +161,9 @@ else:
     with st.expander("Show Raw Data Table"):
         st.dataframe(filtered_df[['Review Date','Ratings','Review','Sentiment','Sentiment_Class','Review Length']] if len(filtered_df) else filtered_df)
 
-    st.markdown("---")
+    st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown(
-        "<p style='text-align:center;font-size:15px;color:#eaeaea;'>"
-        "Made with Streamlit | <a href='https://github.com/nayakiniki/ChatGPT-reviews' style='color:#eaeaea;'>GitHub Repo</a>"
+        "<p style='text-align:center;font-size:16px;color:#06d6a0;'>"
+        "Made with ❤️ using Streamlit | <a href='https://github.com/nayakiniki/ChatGPT-reviews' style='color:#06d6a0;'>GitHub Repo</a>"
         "</p>", unsafe_allow_html=True
     )
