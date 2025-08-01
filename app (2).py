@@ -15,7 +15,7 @@ uploaded_file = st.file_uploader("Upload your ChatGPT_Reviews.csv", type=["csv"]
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     df['Review Date'] = pd.to_datetime(df['Review Date'])
-    df['Review Length'] = df['Review'].apply(len)
+    df['Review Length'] = df['Review'].apply(lambda x: len(str(x)) if pd.notnull(x) else 0)
     df['Sentiment'] = df['Review'].apply(lambda x: TextBlob(str(x)).sentiment.polarity)
     df['Sentiment_Class'] = df['Sentiment'].apply(lambda x: 'Positive' if x > 0 else ('Negative' if x < 0 else 'Neutral'))
 
