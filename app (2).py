@@ -5,30 +5,63 @@ import seaborn as sns
 from wordcloud import WordCloud
 from textblob import TextBlob
 
-# ---- Spiral-inspired Animated Background CSS ----
+# ---- Spiral-inspired Animated Background + Shining Text CSS ----
 st.markdown("""
     <style>
     body {background: #18181b;}
     .stApp {background: #18181b;}
-    h1, h2, h3, h4 {color: #06d6a0;}
+    h1, h2, h3, h4 {color: #5efc8d;}
     .block-container {padding-top: 2rem;}
-    hr {border-top: 2px solid #06d6a0;}
+    hr {border-top: 2px solid #5efc8d;}
     .sidebar .sidebar-content {background-color: #23272f;}
-    .morphing-text {
-        font-size: 3rem;
-        font-weight: 800;
-        background: linear-gradient(90deg,#06d6a0,#118ab2,#f72585);
+    /* Shining header effect */
+    .shining-title {
+        font-size: 3.3rem;
+        font-weight: 900;
+        text-align: center;
+        letter-spacing: 0.12em;
+        background: linear-gradient(90deg, #00eaff 10%, #5efc8d 40%, #a259f7 60%, #ffd166 90%);
+        background-size: 200% auto;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        animation: morph 2.5s infinite alternate;
+        animation: shine 2.9s linear infinite, pop 1.2s cubic-bezier(.22,1.61,.36,.98) 1;
+        filter: drop-shadow(0 0 22px #ffd166) drop-shadow(0 0 12px #a259f7);
+        margin-bottom: 2.7rem;
+    }
+    @keyframes shine {
+      to {
+        background-position: 200% center;
+      }
+    }
+    @keyframes pop {
+      0% {
+        transform: scale(0.4);
+        opacity: 0;
+      }
+      60% {
+        transform: scale(1.13);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    .shining-sub {
+        font-size: 1.4rem;
+        font-weight: 700;
         text-align: center;
-        margin-bottom: 2rem;
+        letter-spacing: 0.09em;
+        background: linear-gradient(90deg, #ffd166 10%, #00eaff 90%);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shine 3.5s linear infinite, pop 1.4s cubic-bezier(.22,1.61,.36,.98) 1;
+        filter: drop-shadow(0 0 9px #ffd166);
+        margin-bottom: 1.7rem;
+        margin-top: 0.5rem;
     }
-    @keyframes morph {
-      0% {letter-spacing:0.15em;}
-      50% {letter-spacing:0.35em;}
-      100% {letter-spacing:0.15em;}
-    }
+    /* Spiral-inspired animated background */
     .spiral-bg {
         position: fixed;
         inset: 0;
@@ -36,7 +69,7 @@ st.markdown("""
         width: 100vw;
         height: 100vh;
         overflow: hidden;
-        background: radial-gradient(ellipse 70% 70% at 50% 50%, #23272f 40%, #06d6a0 60%, #118ab2 85%, #18181b 100%);
+        background: radial-gradient(ellipse 70% 70% at 50% 50%, #23272f 40%, #00eaff 60%, #a259f7 85%, #18181b 100%);
         animation: spiralmove 12s linear infinite;
     }
     @keyframes spiralmove {
@@ -56,12 +89,11 @@ if "csv_uploaded" not in st.session_state:
 if not st.session_state.csv_uploaded:
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     st.markdown(
-        "<div class='morphing-text'>ChatGPT Feedback Hub</div>",
+        "<div class='shining-title'>ChatGPT Feedback Hub</div>",
         unsafe_allow_html=True
     )
-    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(
-        "<div style='text-align:center;color:#06d6a0;font-size:1.3rem;'>Upload your ChatGPT Reviews CSV:</div>", 
+        "<div class='shining-sub'>Upload your ChatGPT Reviews CSV</div>",
         unsafe_allow_html=True
     )
     uploaded_file = st.file_uploader("Upload CSV", type="csv")
@@ -69,7 +101,7 @@ if not st.session_state.csv_uploaded:
         st.session_state.csv_uploaded = True
         df = pd.read_csv(uploaded_file)
 else:
-    st.title("ChatGPT Feedback Hub")
+    st.markdown("<div class='shining-title'>ChatGPT Feedback Hub</div>", unsafe_allow_html=True)
     st.markdown("<hr>", unsafe_allow_html=True)
 
     uploaded_file = st.file_uploader("Upload CSV to reload", type="csv")
@@ -101,7 +133,7 @@ else:
 
     st.markdown("<hr>", unsafe_allow_html=True)
 
-    st.subheader("Ratings Distribution")
+    st.markdown("<div class='shining-sub'>Ratings Distribution</div>", unsafe_allow_html=True)
     if len(filtered_df):
         fig, ax = plt.subplots()
         sns.countplot(x='Ratings', data=filtered_df, palette='cool')
@@ -110,7 +142,7 @@ else:
     else:
         st.info("No data for selected filters.")
 
-    st.subheader("Sentiment Breakdown")
+    st.markdown("<div class='shining-sub'>Sentiment Breakdown</div>", unsafe_allow_html=True)
     if len(filtered_df):
         fig, ax = plt.subplots()
         sns.countplot(x='Sentiment_Class', data=filtered_df, palette='mako')
@@ -119,7 +151,7 @@ else:
     else:
         st.info("No data for selected filters.")
 
-    st.subheader("Review Word Cloud")
+    st.markdown("<div class='shining-sub'>Review Word Cloud</div>", unsafe_allow_html=True)
     all_reviews = ' '.join(filtered_df['Review'].dropna().astype(str))
     if all_reviews.strip():
         wordcloud = WordCloud(width=800, height=400, background_color='#18181b', colormap='cool').generate(all_reviews)
@@ -130,7 +162,7 @@ else:
     else:
         st.info("No review text available for word cloud in current filter.")
 
-    st.subheader("Sentiment Polarity by Rating")
+    st.markdown("<div class='shining-sub'>Sentiment Polarity by Rating</div>", unsafe_allow_html=True)
     if len(filtered_df):
         fig, ax = plt.subplots()
         sns.boxplot(x='Ratings', y='Sentiment', data=filtered_df, palette='Set2')
@@ -139,15 +171,15 @@ else:
     else:
         st.info("No data for sentiment vs rating.")
 
-    st.subheader("Trends Over Time")
+    st.markdown("<div class='shining-sub'>Trends Over Time</div>", unsafe_allow_html=True)
     if 'Review Date' in filtered_df.columns and len(filtered_df):
         try:
             filtered_df['Date'] = pd.to_datetime(filtered_df['Review Date'], errors='coerce').dt.date
             rating_trend = filtered_df.groupby('Date')['Ratings'].mean()
             sentiment_trend = filtered_df.groupby('Date')['Sentiment'].mean()
             fig, ax = plt.subplots(figsize=(12,6))
-            ax.plot(rating_trend.index, rating_trend, label='Avg Rating', color="#06d6a0", marker="o")
-            ax.plot(sentiment_trend.index, sentiment_trend, label='Avg Sentiment', color="#118ab2", linestyle='--', marker="x")
+            ax.plot(rating_trend.index, rating_trend, label='Avg Rating', color="#5efc8d", marker="o")
+            ax.plot(sentiment_trend.index, sentiment_trend, label='Avg Sentiment', color="#00eaff", linestyle='--', marker="x")
             ax.set_xlabel('Date')
             ax.set_ylabel('Score')
             ax.set_facecolor("#23272f")
@@ -163,7 +195,7 @@ else:
 
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown(
-        "<p style='text-align:center;font-size:16px;color:#06d6a0;'>"
-        "Made with ❤️ using Streamlit | <a href='https://github.com/nayakiniki/ChatGPT-reviews' style='color:#06d6a0;'>GitHub Repo</a>"
+        "<p style='text-align:center;font-size:16px;color:#5efc8d;'>"
+        "Made with ❤️ using Streamlit | <a href='https://github.com/nayakiniki/ChatGPT-reviews' style='color:#5efc8d;'>GitHub Repo</a>"
         "</p>", unsafe_allow_html=True
     )
