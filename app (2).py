@@ -36,7 +36,7 @@ if uploaded_file is not None:
     st.pyplot(fig)
 
     st.subheader("Word Cloud")
-    all_reviews = ' '.join(filtered_df['Review'])
+    all_reviews = ' '.join(filtered_df['Review'].dropna().astype(str))
     wordcloud = WordCloud(width=800, height=400, background_color='white').generate(all_reviews)
     fig, ax = plt.subplots(figsize=(12,6))
     ax.imshow(wordcloud, interpolation='bilinear')
